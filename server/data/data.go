@@ -2,7 +2,7 @@ package data
 
 import "github.com/zsanders16/grpc/pb"
 
-var employee = []pb.Employee{
+var Employees = []pb.Employee{
 	pb.Employee{
 		Id:                  1,
 		BadgeNumber:         2080,
