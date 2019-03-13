@@ -33,7 +33,9 @@ func main() {
 	s := grpc.NewServer(opts...)
 	pb.RegisterEmployeeServiceServer(s, &employeeService{})
 	log.Println("starting server on port ", port)
-	s.Serve(lis)
+	go s.Serve(lis)
+	var st string
+	fmt.Scanln(&st)
 }
 
 type employeeService struct{}
@@ -84,11 +86,25 @@ func (s *employeeService) AddPhoto(stream pb.EmployeeService_AddPhotoServer) err
 }
 
 func (s *employeeService) Save(cxt context.Context, req *pb.EmployeeRequest) (*pb.EmployeeResponse, error) {
-
-	return nil, nil
+	e := req.Employee
+	fmt.Println(e)
+	return &pb.EmployeeResponse{Employee: e}, nil
 }
 
 func (s *employeeService) SaveAll(stream pb.EmployeeService_SaveAllServer) error {
+
+	for {
+		emp, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(emp.Employee)
+		stream.Send(&pb.EmployeeResponse{Employee: emp.Employee})
+	}
 
 	return nil
 }
