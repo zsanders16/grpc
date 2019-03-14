@@ -8,6 +8,8 @@ import (
 	"log"
 	"net"
 
+	"google.golang.org/grpc/channelz/service"
+
 	"google.golang.org/grpc/metadata"
 
 	"github.com/zsanders16/grpc/pb"
@@ -33,6 +35,7 @@ func main() {
 	s := grpc.NewServer(opts...)
 	pb.RegisterEmployeeServiceServer(s, &employeeService{})
 	log.Println("starting server on port ", port)
+	service.RegisterChannelzServiceToServer(s)
 	go s.Serve(lis)
 	var st string
 	fmt.Scanln(&st)
